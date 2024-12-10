@@ -2,6 +2,12 @@
 
 In this document, we illustrate the main features of the `fbkmr` R package through examples. Additional information on the statistical methodology and computational details are provided in the accompanying documentation and research articles.
 
+## How to Cite
+
+The package applies methods introduced in the paper:
+
+**Sonabend, A., Zhang, J., Schwartz, J., Coull, B.A. and Lu, J., 2024. Scalable Gaussian process regression via median posterior inference for estimating multi-pollutant mixture health effects. arXiv preprint arXiv:2411.10858.**
+
 ## Brief Overview of Fast Bayesian Kernel Machine Regression Method
 
 Kernel machine regression (KMR), also known as Gaussian process regression, is a popular tool in the machine learning literature. For large datasets, we implement data sketching techniques to make computation feasible. The general modeling framework is:
@@ -31,9 +37,9 @@ This package requires the Gurobi optimization solver. Please follow the instruct
 
 2. **Obtain a Gurobi License**: Gurobi requires a valid license. Academic users can obtain a free license by registering on the [Gurobi website](https://www.gurobi.com/academia/academic-program-and-licenses/). After registration, follow the provided [instructions](https://www.gurobi.com/features/academic-named-user-license/) to set up your license. Whence you run grbgetkey using the argument provided on the Academic License Detail page (ex: grbgetkey ae36ac20-16e6-acd2-f242-4da6e765fa0a). The grbgetkey program will prompt you to store the license file on your machine. Open terminal and run the following command to set up the license (change the path to the actual path to your license file):
 
-```bash
-export GRB_LICENSE_FILE="/path/to/gurobi.lic"
-```
+    ```bash
+    export GRB_LICENSE_FILE="/path/to/gurobi.lic"
+    ```
 
 
 3. **Locate the Gurobi R Package File**: The Gurobi R package (`gurobi`) is included with the Gurobi installation. You can find the package file in the `R` subdirectory of your Gurobi installation directory. For example, if you installed Gurobi 12.0.0, the default installation paths could be:
@@ -113,103 +119,12 @@ fitkm <- skmbayes(y = y, Z = Z, X = X,
                   sketch.type = "gaussian", 
                   iter = 1000, 
                   varsel = TRUE)
+# You can compare the fit with the standard bkmr package
+# Warning: this will take a long time to run
+fitkm_bkmr <- kmbayes(y = y, Z = Z, X = X, 
+                  n_subset = 5,
+                  sketch.type = "gaussian", 
+                  iter = 1000, 
+                  varsel = TRUE)
 ```
 
-### Investigate Model Convergence
-
-Let's visually inspect the trace plots:
-
-```r
-TracePlot(fit = fitkm, par = "beta")
-TracePlot(fit = fitkm, par = "sigsq.eps")
-TracePlot(fit = fitkm, par = "r", comp = 1)
-```
-
-### Estimated Posterior Inclusion Probabilities
-
-For models with variable selection:
-
-```r
-ExtractPIPs(fitkm)
-```
-
-### Estimating Risk Summaries
-
-FBKMR provides functions to estimate overall and single-variable risk summaries:
-
-```r
-# Overall risk summaries
-risks.overall <- OverallRiskSummaries_wasp(
-  fit = fitkm,
-  y = y,
-  Z = Z,
-  X = X,
-  qs = seq(0.25, 0.75, by = 0.05)
-)
-
-# Single variable risk summaries  
-risks.single <- SingVarRiskSummaries_wasp(
-  fit = fitkm,
-  y = y,
-  Z = Z,
-  X = X,
-  qs.diff = c(0.25, 0.75)
-)
-```
-
-### Visualizing Exposure-Response Relationships
-
-```r
-# Single predictor plots
-pred.resp.univar <- PredictorResponseUnivar(
-  fit = fitkm,
-  y = y,
-  Z = Z,
-  X = X,
-  n_subset = 5  # Match n_subset used in fitting
-)
-
-# Bivariate predictor plots
-pred.resp.bivar <- PredictorResponseBivar(
-  fit = fitkm,
-  y = y,
-  Z = Z,
-  X = X,
-  n_subset = 5
-)
-
-# Plot using ggplot2
-library(ggplot2)
-ggplot(pred.resp.univar, 
-       aes(z, est, ymin = est - 1.96*se, ymax = est + 1.96*se)) + 
-  geom_smooth(stat = "identity") + 
-  facet_wrap(~ variable) +
-  ylab("h(z)")
-```
-
-### Investigating Prior Distributions
-
-The `InvestigatePrior` function helps understand how the $r_m$ parameters affect model fit:
-
-```r
-priorfits <- InvestigatePrior(
-  y = y, 
-  Z = Z, 
-  X = X,
-  q.seq = c(2, 1/2, 1/4, 1/16)
-)
-
-PlotPriorFits(
-  y = y,
-  Z = Z, 
-  X = X,
-  fits = priorfits
-)
-```
-
-## References
-
-For technical details on the scalable algorithm implementation and data sketching approach, please refer to the accompanying paper.
-
-For the original BKMR method:
-- Bobb, JF, et al. (2015). Bayesian Kernel Machine Regression for Estimating the Health Effects of Multi-Pollutant Mixtures. Biostatistics 16(3): 493-508.
