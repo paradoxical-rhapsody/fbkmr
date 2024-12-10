@@ -15,16 +15,8 @@ Kernel machine regression (KMR), also known as Gaussian process regression, is a
 $$
  g(\mu_i) = h(z_{i1}, \ldots, z_{iM}) + \beta x_i, \quad i = 1, \ldots, n
 $$
-
 where $g$ is a monotonic link function, $\mu_i = E(Y_i)$, $h$ is a flexible function of the predictor variables $z_{i1}, \ldots, z_{iM}$, and $x$ is a vector of covariates assumed to have a linear relationship with the outcome ($\beta$ is the corresponding vector of coefficients).
 
-The Gaussian kernel is used for representing $h$:
-
-$$
-K(z, z') = \exp\Bigg\{-\sum_{m=1}^{M} r_m (z_m - z'_m)^2\Bigg\} 
-$$
-
-Here, $z$ and $z'$ represent vectors of predictors for two different individuals, and $r_m \geq 0$ denotes the tuning parameter that controls the smoothness of $h$ as a function of the exposure $z_m$.
 The R package `bmkr` can be used to fit the BKMR model. However, when the data size is large, the computation can be slow.
 
 Our **fast Bayesian kernel machine regression** (FBKMR) method addresses scalability issues for massive dataset by employing a divide-and-conquer strategy. This approach enables efficient computation for large datasets while maintaining robust inference capabilities.
