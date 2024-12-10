@@ -20,7 +20,10 @@ where $g$ is a monotonic link function, $\mu_i = E(Y_i)$, $h$ is a flexible func
 
 The Gaussian kernel is used for representing $h$:
 
-$$ K(z, z') = \exp\left\{-\sum_{m=1}^{M} r_m (z_m - z'_m)^2\right\} $$
+$$ 
+K(z, z') = \exp\left\{-\sum_{m=1}^{M} r_m (z_m - z'_m)^2\right\} 
+$$
+
 Here, $z$ and $z'$ represent vectors of predictors for two different individuals, and $r_m \geq 0$ denotes the tuning parameter that controls the smoothness of $h$ as a function of the exposure $z_m$.
 The R package `bmkr` can be used to fit the BKMR model. However, when the data size is large, the computation can be slow.
 

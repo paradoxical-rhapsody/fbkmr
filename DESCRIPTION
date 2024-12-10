@@ -2,9 +2,26 @@ Package: fbkmr
 Type: Package
 Title: Fast Bayesian Kernel Machine Regression
 Version: 0.1.0
-Author: Jiangshan Zhang, Aaron Sonabend, Joel Schwartz, Brent Coull, Junwei Lu
+Authors@R: c(
+       person(given = "Jiangshan",
+              family = "Zhang",
+              role = "aut","cre"),
+       person(given = "Aaron",
+              family = "Sonabend",
+              role = "aut"),
+       person(given = "Joel",
+              family = "Schwartz",
+              role = "aut"),
+       person(given = "Brent",
+              family = "Coull",
+              role = "aut"),
+       person(given = "Junwei",
+              family = "Lu",
+              role = c("aut", "cre"),
+              email = "junweilu@hsph.harvard.edu")
+   )
 Maintainer: Junwei Lu <junweilu@hsph.harvard.edu>
-Description: This package implements the fast Bayesian kernel machine regression (FBKMR) method addresses scalability issues for massive dataset by employing a divide-and-conquer strategy. This approach enables efficient computation for large datasets while maintaining robust inference capabilities.
+Description: Implements a fast Bayesian kernel machine regression method that addresses scalability issues for massive datasets by employing a divide-and-conquer strategy. This approach enables efficient computation for large datasets while maintaining robust inference capabilities.
 License: MIT
 Encoding: UTF-8
 LazyData: true
