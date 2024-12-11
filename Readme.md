@@ -30,15 +30,11 @@ The proposed framework involves splitting the data into smaller subsets, computi
 install.packages("fbkmr")
 ```
 
-If you cannot install the package from R, you can open terminal and run the following command to manually download the package:
-
-```bash
-curl -O https://raw.githubusercontent.com/junwei-lu/fbkmr/fbkmr_0.1.1.tar.gz
-```
-Let `path_to_package` be the path to the downloaded package. Then open R and run the following command to install the package:
+Open the R console and run the following command to install the package from source:
 
 ```r
-install.packages("path_to_package/fbkmr_0.1.1.tar.gz",repos = NULL, type="source",dependencies = TRUE, INSTALL_opts="--no-multiarch")
+install.packages("devtools") # When you have not installed devtools package
+devtools::install_github("junwei-lu/fbkmr")
 ```
 
 ## Example of Using `fbkmr` Package
