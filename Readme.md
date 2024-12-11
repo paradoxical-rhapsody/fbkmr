@@ -24,63 +24,16 @@ Our **fast Bayesian kernel machine regression** (FBKMR) method addresses scalabi
 
 The proposed framework involves splitting the data into smaller subsets, computing posterior distributions independently within these subsets using a rescaled Gaussian kernel, and then aggregating these results via a generalized geometric median. This methodology ensures the posterior distribution reflects the full data while mitigating computational complexity. 
 
-## Installation
+## Install
 
-This package requires the Gurobi optimization solver. Please follow the instructions below to install Gurobi in R.
+```r
+install.packages("fbkmr")
+```
+If you cannot install the package from R, you can install it from source
 
-
-1. **Install the Gurobi Optimizer**: Download and install the appropriate version of the Gurobi Optimizer for your operating system from the [Gurobi website](https://www.gurobi.com/downloads/).
-
-2. **Obtain a Gurobi License**: Gurobi requires a valid license. Academic users can obtain a free license by registering on the [Gurobi website](https://www.gurobi.com/academia/academic-program-and-licenses/). After registration, follow the provided [instructions](https://www.gurobi.com/features/academic-named-user-license/) to set up your license. Whence you run grbgetkey using the argument provided on the Academic License Detail page (ex: grbgetkey ae36ac20-16e6-acd2-f242-4da6e765fa0a). The grbgetkey program will prompt you to store the license file on your machine. Open terminal and run the following command to set up the license (change the path to the actual path to your license file):
-
-    ```bash
-    export GRB_LICENSE_FILE="/path/to/gurobi.lic"
-    ```
-
-
-3. **Locate the Gurobi R Package File**: The Gurobi R package (`gurobi`) is included with the Gurobi installation. You can find the package file in the `R` subdirectory of your Gurobi installation directory. For example, if you installed Gurobi 12.0.0, the default installation paths could be:
-
-   - **Windows**: `C:\gurobi1200\win64\R\gurobi_12.0-0.zip`
-   - **macOS**: `/Library/gurobi1200/macos_universal2/R/gurobi_12.0-0_R_4.4.1.tgz`
-   - **Linux**: `/opt/gurobi1200/linux64/R/gurobi_12.0-0_R_4.4.1.tar.gz`
-
-The actual path could be different depending on your Gurobi version and installation directory.
-   
-
-4. **Install the 'slam' Package in R**: The Gurobi R package depends on the `slam` package. Install it from CRAN by running the following command in your R console:
-
-   ```R
-   install.packages('slam')
-   ```
-
-5. **Install the Gurobi R Package**: Use the `install.packages` function to install the Gurobi R package from the local file. Replace `<path_to_gurobi_package>` with the actual path to the Gurobi R package file located in step 3.
-
-   ```R
-   install.packages('<path_to_gurobi_package>', repos = NULL)
-   ```
-
-   For example,  on macOS:
-
-   ```R
-   install.packages('/Library/gurobi1200/macos_universal2/R/gurobi_12.0-0_R_4.4.1.tgz', repos = NULL)
-   ```
-
-   On Linux:
-
-   ```R
-   install.packages('/opt/gurobi1200/linux64/R/gurobi_12.0-0_R_4.4.1.tar.gz', repos = NULL)
-   ```
-
-   
-
-6. **Verify the Installation**: Load the Gurobi package in R to ensure it was installed correctly:
-
-   ```R
-   library(gurobi)
-   result <- gurobi(list(A = matrix(c(1, 1), nrow = 1), obj = c(1, 1), modelsense = 'max', rhs = 1, sense = '<'))
-   ```
-
-   If the package loads without errors, the installation was successful.
+```r
+install.packages("fbkmr",type="source")
+```
 
 ## Example of Using `fbkmr` Package
 First, load the R package.
