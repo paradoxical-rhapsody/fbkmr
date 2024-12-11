@@ -26,10 +26,6 @@ The proposed framework involves splitting the data into smaller subsets, computi
 
 ## Install
 
-```r
-install.packages("fbkmr")
-```
-
 Open the R console and run the following command to install the package from source:
 
 ```r
