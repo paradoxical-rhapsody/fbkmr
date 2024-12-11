@@ -1,7 +1,6 @@
 linear_prog_h<-function(h_est, n_subset, mesh_size=100, n_samp=100){
   library(lpSolve)
   library(Matrix)
-  library(gurobi)
 
   for (i in 1:n_subset) {                          #####sample from each subset
     varname<-as.character(paste0('post_samp_',i))
@@ -124,14 +123,16 @@ overall_dens_h<-function(n_subset, n_samp, overall_samp, D) {
   param$Crossover = 0
   param$outputflag = 0
 
-  result<- gurobi(model, param)
+  # result <- gurobi(model, param)
+  # aOptSol = as.matrix(result$x)[1:N, 1]
+
   #Define this soft-thresholding operator to remove small elements.
   softThresOper = function(x,t){
     a=sign(x)*max(abs(x) - t, 0)
     return(a)}
 
   # Recover the solution.
-  aOptSol = as.matrix(result$x)[1:N, 1];
+  # aOptSol = as.matrix(result$x)[1:N, 1];
   xRest   = as.matrix(result$x)[(N+1):length(result$x)];
   for (p in 1:n_subset) {
     tOptSol = matrix(xRest[1:(N*Ni)], N, Ni)/Ni;

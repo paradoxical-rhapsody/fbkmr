@@ -139,7 +139,7 @@ Key parameters include:
 - `linprog`: Whether to find overall coefficient estimates for covariates X (TRUE/FALSE)
 - `n.cores`: Number of cores to use for parallel computing (defaults to half of total cores if not specified)
 
-When `linprog=TRUE`, the algorithm returns an overall bkmrfit object similar to the BKMR package. When `FALSE`, it returns a list of n_subset bkmrfit objects. Since linear programming can be time-consuming with large n_subset, we recommend setting `linprog=FALSE` if you are not interested in exploring covariate effects.
+When `linprog=TRUE`, the algorithm returns an overall bkmrfit object similar to the `bkmr` package. When `FALSE`, it returns a list of n_subset bkmrfit objects. Since linear programming can be time-consuming with large n_subset, we recommend setting `linprog=FALSE` if you are not interested in exploring covariate effects.
 
 For choosing the suitable number of subsets, we recommend that for each sub dataset, the sample size is around 1000. However, the number of subsets should not greater than square root of total sample size.
 

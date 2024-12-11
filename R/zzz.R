@@ -1,6 +1,5 @@
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage("Please only use skmbayes function for now.")
-  packageStartupMessage("The package requires Gurobi package. Please check the website for installation: https://github.com/junwei-lu/fbkmr.")
+  packageStartupMessage("Please check the Github repository for the tutorial and latest updates: https://github.com/junwei-lu/fbkmr.")
 }
 
 release_questions <- function() {

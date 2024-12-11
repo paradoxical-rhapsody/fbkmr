@@ -23,7 +23,6 @@ Imports:
     doParallel,
     fields,
     foreach,
-    gurobi,
     lpSolve,
     magrittr,
     mvtnorm,
