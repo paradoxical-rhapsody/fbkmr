@@ -122,7 +122,7 @@ res <- persp(z1, z2, hgrid.true, theta = 30, phi = 20, expand = 0.5,
 To fit the FBKMR model, we use the `skmbayes` function which implements data sketching for scalability. 
 ```r
 set.seed(111)
-fitkm <- skmbayes(y = y, Z = Z, X = X, iter = 1000, n_subset=5, file_path = NULL,save_loc = FALSE, linprog=FALSE, n.cores = 4)
+fitkm <- skmbayes(y = y, Z = Z, X = X, iter = 1000, n_subset=5, file_path = NULL,save_loc = FALSE, n.cores = 4)
 ```
 Key parameters include:
 - `n_subset`: Number of data splits. You can choose the number of splits based on the cpu cores you have. If you work on a single core, the program will run sequentially over the splits. We recommend using 5 splits for a single core.
@@ -136,10 +136,8 @@ Key parameters include:
 - `n_subset`: Number of sub datasets for the algorithm to run (n_subset=1 for original BKMR)
 - `file_path`: Location to save intermediate results for future use
 - `save_loc`: Whether to save intermediate data (TRUE/FALSE)
-- `linprog`: Whether to find overall coefficient estimates for covariates X (TRUE/FALSE)
 - `n.cores`: Number of cores to use for parallel computing (defaults to half of total cores if not specified)
 
-When `linprog=TRUE`, the algorithm returns an overall bkmrfit object similar to the `bkmr` package. When `FALSE`, it returns a list of n_subset bkmrfit objects. Since linear programming can be time-consuming with large n_subset, we recommend setting `linprog=FALSE` if you are not interested in exploring covariate effects.
 
 For choosing the suitable number of subsets, we recommend that for each sub dataset, the sample size is around 1000. However, the number of subsets should not greater than square root of total sample size.
 

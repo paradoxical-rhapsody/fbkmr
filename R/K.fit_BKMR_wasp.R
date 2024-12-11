@@ -504,7 +504,7 @@ linear_prog<-function(kmbayes_res=kmbayes_res,n_subset=n_subset,iter=iter,n_samp
 #' set.seed(111)
 #' fitkm <- skmbayes(y = y, Z = Z, X = X, iter = 1000, n_subset=5, verbose = FALSE, varsel = FALSE)
 #'
-#' @import gurobi mvtnorm foreach doParallel lpSolve Matrix gurobi KernSmooth nlme magrittr fields slam parallel
+#' @import  mvtnorm foreach doParallel lpSolve Matrix KernSmooth nlme magrittr fields slam parallel
 #' @export
 #'
 
@@ -517,57 +517,62 @@ skmbayes<-function(Z,X,y,n_subset=1,n_samp=200, iter=1000,varsel=FALSE, est.h=TR
 
   kmbayes_res<-kmbayes_Wasp(Z=Z,X=X,y=y,n_subset=n_subset,n_samp=n_samp, iter=iter,varsel=varsel, est.h=est.h, Znew=Znew,file_path=file_path,save_loc=save_loc,...)
 
-  # Continue with the rest of the function when linprog = FALSE
-  # ... existing code ...
+  # if (linprog==TRUE){
+  #   if(save_loc==T){
+  #     for (j in 1:n_subset){
+  #       kmbayes_res[[j]]<-readRDS(file = paste0(file_path,'/wasp_res_',j,'.RDS'))
+  #     }
+  #   }
 
-  if(save_loc==T){
-    for (j in 1:n_subset){
-      kmbayes_res[[j]]<-readRDS(file = paste0(file_path,'/wasp_res_',j,'.RDS'))
-    }
+  #   N_part <- floor(sqrt(n_subset))
+  #   res_split <- split(seq(1,n_subset,1), ceiling(seq_along(seq(1,n_subset,1))/N_part))
+
+  #   parallel::detectCores()
+  #   n.cores <- ceiling(parallel::detectCores()/2)
+  #   my.cluster <- parallel::makeCluster(n.cores)
+  #   doParallel::registerDoParallel(cl = my.cluster)
+
+  #   Res_final_split<-foreach(i=1:ceiling(n_subset/N_part))%dopar%{
+  #     sel <- res_split[[i]]
+  #     kmbayes_res_split<-kmbayes_res[sel]
+
+  #     Res_final_s<-linear_prog(kmbayes_res=kmbayes_res_split,n_subset=length(sel),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
+
+  #     if (save_loc==T){
+  #       saveRDS(Res_final_s, file = paste0(file_path,'/comb_',i,'.RDS'))
+  #     }
+  #     return(Res_final_s)
+  #   }
+  #   stopCluster(cl = my.cluster)
+
+  #   message(paste('Split linear programming is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
+
+  #   Res_final<-linear_prog(kmbayes_res=Res_final_split,n_subset=ceiling(n_subset/N_part),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
+
+  #   message(paste('FBKMR is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
+
+  #       time2 <- Sys.time()
+
+  #       Res_final$X <- X
+  #       Res_final$Z <- Z
+  #       Res_final$y <- y
+  #       Res_final$n_subset <- n_subset
+  #       Res_final$iter <- iter
+  #       Res_final$est.h <-est.h
+  #       Res_final$varsel <- varsel
+  #       Res_final$lambda<-as.matrix(Res_final$lambda)
+  #       Res_final$time1 <-time1
+  #       Res_final$time2 <-time2
+
+  #       if(save_loc==T){saveRDS(Res_final, file = paste0(file_path,'/wasp_res_final','.RDS'))}
+  #       class(Res_final) <- c("bkmrfit", class(Res_final))
+  #       return(Res_final)
+  # }
+  #if(linprog==F){
+    message(paste('FBKMR is completed without overall result, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
+    return(kmbayes_res)
+  #}
+
+
   }
-
-  N_part <- floor(sqrt(n_subset))
-  res_split <- split(seq(1,n_subset,1), ceiling(seq_along(seq(1,n_subset,1))/N_part))
-
-  parallel::detectCores()
-  n.cores <- ceiling(parallel::detectCores()/2)
-  my.cluster <- parallel::makeCluster(n.cores)
-  doParallel::registerDoParallel(cl = my.cluster)
-
-  Res_final_split<-foreach(i=1:ceiling(n_subset/N_part))%dopar%{
-    sel <- res_split[[i]]
-    kmbayes_res_split<-kmbayes_res[sel]
-
-    Res_final_s<-linear_prog(kmbayes_res=kmbayes_res_split,n_subset=length(sel),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
-
-    if (save_loc==T){
-      saveRDS(Res_final_s, file = paste0(file_path,'/comb_',i,'.RDS'))
-    }
-    return(Res_final_s)
-  }
-  stopCluster(cl = my.cluster)
-
-  message(paste('Split linear programming is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
-
-  Res_final<-linear_prog(kmbayes_res=Res_final_split,n_subset=ceiling(n_subset/N_part),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
-
-  message(paste('FBKMR is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
-
-      time2 <- Sys.time()
-
-      Res_final$X <- X
-      Res_final$Z <- Z
-      Res_final$y <- y
-      Res_final$n_subset <- n_subset
-      Res_final$iter <- iter
-      Res_final$est.h <-est.h
-      Res_final$varsel <- varsel
-      Res_final$lambda<-as.matrix(Res_final$lambda)
-      Res_final$time1 <-time1
-      Res_final$time2 <-time2
-
-      if(save_loc==T){saveRDS(Res_final, file = paste0(file_path,'/wasp_res_final','.RDS'))}
-      class(Res_final) <- c("bkmrfit", class(Res_final))
-      return(Res_final)
-}
 
