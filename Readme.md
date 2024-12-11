@@ -110,9 +110,9 @@ One cross section of interest is the univariate relationship between each zm and
 pred.resp.univar <- PredictorResponseUnivar(fit = fitkm, n_subset = 5, q.fixed = 0.5, n.cores = 4)
 library(ggplot2)
 ggplot(pred.resp.univar, aes(z, est, ymin = est - 1.96*se, ymax = est + 1.96*se)) + 
-    geom_smooth(stat = "identity") + 
-    facet_wrap(~ variable) +
-  ylab("h(z)")
+geom_smooth(stat = "identity") + 
+facet_wrap(~ variable) +
+ylab("h(z)")
 ```
 ![Predictor-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/01_hz_plot.png)
 
@@ -123,10 +123,10 @@ pred.resp.bivar <- PredictorResponseBivar(fit = fitkm, q.fixed = 0.5,n_subset = 
 ggplot(pred.resp.bivar, aes(z1, z2, fill = est)) + 
     geom_raster() + 
     facet_grid(variable2 ~ variable1) +
-  scale_fill_gradientn(colours=c("#0000FFFF","#FFFFFFFF","#FF0000FF")) +
-  xlab("expos1") +
-  ylab("expos2") +
-  ggtitle("h(expos1, expos2)")
+    scale_fill_gradientn(colours=c("#0000FFFF","#FFFFFFFF","#FF0000FF")) +
+    xlab("expos1") +
+    ylab("expos2") +
+    ggtitle("h(expos1, expos2)")
 ```
 ![Bivariate predictor-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/02_expose.png)
 
@@ -139,7 +139,7 @@ ggplot(pred.resp.bivar.levels, aes(z1, est)) +
     geom_smooth(aes(col = quantile), stat = "identity") + 
     facet_grid(variable2 ~ variable1) +
     ggtitle("h(expos1 | quantiles of expos2)") +
-  xlab("expos1")
+    xlab("expos1")
 ```
 ![Predictor-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/03_est.png)
 **Plot the predictor-response function**
@@ -171,7 +171,7 @@ risks.singvar <- SingVarRiskSummaries_wasp(fit = fitkm, y = y, Z = Z, X = X,
 ggplot(risks.singvar, aes(variable, est, ymin = est - 1.96*sd, 
                           ymax = est + 1.96*sd, col = q.fixed)) + 
     geom_pointrange(position = position_dodge(width = 0.75)) + 
-  coord_flip()
+    coord_flip()
 ```
 ![Single-predictor health risks](https://github.com/junwei-lu/fbkmr/blob/main/figs/05_qfix.png)
 
