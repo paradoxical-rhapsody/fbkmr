@@ -115,6 +115,7 @@ hgrid.true <- outer(z1, z2, function(x,y) apply(cbind(x,y), 1, dat$HFun))
 res <- persp(z1, z2, hgrid.true, theta = 30, phi = 20, expand = 0.5, 
              col = "lightblue", xlab = "", ylab = "", zlab = "")
 ```
+![True exposure-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/surf.png)
 
 ### Fit FBKMR
 
@@ -156,6 +157,8 @@ ggplot(pred.resp.univar, aes(z, est, ymin = est - 1.96*se, ymax = est + 1.96*se)
     facet_wrap(~ variable) +
   ylab("h(z)")
 ```
+![Predictor-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/01_hz_plot.png)
+
 Building upon the previous example, we can similarly visualze the bivarate exposure-response function for two predictors, where all of the other predictors are fixed at a particular percentile.
 
 ```r
@@ -168,6 +171,7 @@ ggplot(pred.resp.bivar, aes(z1, z2, fill = est)) +
   ylab("expos2") +
   ggtitle("h(expos1, expos2)")
 ```
+![Bivariate predictor-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/02_expose.png)
 
 To investigate the predictor-response function of a single predictor in `Z` for the second predictor in `Z` fixed at various quantiles, we can use the `PredictorResponseBivarLevels` function, which takes as input the bivariate exposure-response function outputted from the previous command, where the argument `qs` specifies a sequence of quantiles at which to fix the second predictor.
 
@@ -180,7 +184,7 @@ ggplot(pred.resp.bivar.levels, aes(z1, est)) +
     ggtitle("h(expos1 | quantiles of expos2)") +
   xlab("expos1")
 ```
-
+![Predictor-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/03_est.png)
 **Plot the predictor-response function**
 
 In addition to visually inspecting the estimated predictor-response function $h$, one may also wish to calculate a range of summary statistics that highlight specific features of the (potentially) high-dimensional surface. One potential summary measure of interest is to compute the overall effect of the predictors, by comparing the value of $h$ when all predictors are at a particular percentile as compared to when all of them are at their 50th percentile. The function `OverallRiskSummaries_wasp` allows one to specify a sequence of values of quantiles using the argument `qs` and the fixed quantile (the default is the 50th percentile) using the argument `q.fixed`.
@@ -198,7 +202,7 @@ We can also plot the overall risk summaries; here we use the `ggplot` package.
 ggplot(risks.overall, aes(quantile, est, ymin = est - 1.96*sd, ymax = est + 1.96*sd)) + 
     geom_pointrange()
 ```
-
+![Overall risk summaries](https://github.com/junwei-lu/fbkmr/blob/main/figs/04_risk.png)
 Another summary of h that may be of interest would be to summarize the contribution of an individual predictor to the response. For example, we may wish to compare risk when a single predictor in h is at the 75th percentile as compared to when that predictor is at its 25th percentile, where we fix all the remaining predictors to a particular percentile. We refer to this as the single-predictor health risks, and these can be computed using the function `SingVarRiskSummaries_wasp`. The two different quantiles at which to compare the risk are specified using the `qs.diff` argument, and a sequence of values at which to fix the remaining pollutants can be specified using the `q.fixed` argument.
 
 ```r
@@ -212,7 +216,7 @@ ggplot(risks.singvar, aes(variable, est, ymin = est - 1.96*sd,
     geom_pointrange(position = position_dodge(width = 0.75)) + 
   coord_flip()
 ```
-
+![Single-predictor health risks](https://github.com/junwei-lu/fbkmr/blob/main/figs/05_qfix.png)
 
 
 
