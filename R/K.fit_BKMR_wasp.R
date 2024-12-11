@@ -1,7 +1,3 @@
-
-
-
-
 wasp_bayes<-function(n_subset, mesh_size=100, n_samp=100, Z, X, kmbayes_res,iter,... ) {
 
 
