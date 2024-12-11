@@ -8,15 +8,15 @@ The package applies methods introduced in the paper:
 
 **Sonabend, A., Zhang, J., Schwartz, J., Coull, B.A. and Lu, J., 2024. Scalable Gaussian process regression via median posterior inference for estimating multi-pollutant mixture health effects. arXiv preprint arXiv:2411.10858.**
 
-## Brief Overview of Fast Bayesian Kernel Machine Regression Method
+## Bayesian Kernel Machine Regression Method
 
 Kernel machine regression (KMR), also known as Gaussian process regression, is a popular tool in the machine learning literature. For large datasets, we implement data sketching techniques to make computation feasible. The general modeling framework is:
 
 $$
- g(\mu_i) = h(z_{i1}, \ldots, z_{iM}) + \beta x_i, \quad i = 1, \ldots, n
+ Y_i = X_i^\top \beta + h(Z_i) + \epsilon_i, \quad i = 1, \ldots, n,
 $$
 
-where $g$ is a monotonic link function, $\mu_i = E(Y_i)$, $h$ is a flexible function of the predictor variables $z_{i1}, \ldots, z_{iM}$, and $x$ is a vector of covariates assumed to have a linear relationship with the outcome ($\beta$ is the corresponding vector of coefficients).
+where $Z_i$ is a vector of environmental exposure levels, $X_i$ is a vector of possible confounders, and $Y_i$ is the outcome of interest.
 
 The R package `bmkr` can be used to fit the BKMR model. However, when the data size is large, the computation can be slow.
 
@@ -33,7 +33,8 @@ install.packages("devtools") # When you have not installed devtools package
 devtools::install_github("junwei-lu/fbkmr")
 ```
 
-## Example of Using `fbkmr` Package
+## Tutorial
+
 First, load the R package.
 
 ```r
