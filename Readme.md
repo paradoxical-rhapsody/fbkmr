@@ -2,11 +2,11 @@
 
 In this document, we illustrate the main features of the `fbkmr` R package through examples. Additional information on the statistical methodology and computational details are provided in the accompanying documentation and research articles.
 
-## How to Cite
+## Cite the package
 
-The package applies methods introduced in the paper:
+The package applies methods introduced in the [paper](https://arxiv.org/pdf/2411.10858):
 
-**Sonabend, A., Zhang, J., Schwartz, J., Coull, B.A. and Lu, J., 2024. Scalable Gaussian process regression via median posterior inference for estimating multi-pollutant mixture health effects. arXiv preprint arXiv:2411.10858.**
+Sonabend, A., Zhang, J., Schwartz, J., Coull, B.A. and Lu, J., 2024. Scalable Gaussian process regression via median posterior inference for estimating multi-pollutant mixture health effects. arXiv preprint arXiv:2411.10858.
 
 ## Bayesian Kernel Machine Regression Method
 
