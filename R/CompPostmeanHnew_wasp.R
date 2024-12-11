@@ -3,12 +3,9 @@
 #' @inheritParams skmbayes
 #' @param fit An object containing the results returned by a the \code{kmbayes} function
 #' @param Znew matrix of new predictor values at which to predict new \code{h}, where each row represents a new observation. If set to NULL then will default to using the observed exposures Z.
-#' @param method method for obtaining posterior summaries at a vector of new points. now only support "approx", which is faster particularly for large datasets.
 #' @param sel selects which iterations of the MCMC sampler to use for inference; see details
 #' @export
-postmeanhnew_wasp<-function(fit,X,y,Z, Znew = NULL, sel = NULL,method='approx') {
-  if (method != "approx") { message('Only approximate method is supported for now.') }
-
+postmeanhnew_wasp<-function(fit,X,y,Z, Znew = NULL, sel = NULL) {
   if (!is.null(Znew)) {
     if(is.null(dim(Znew))) Znew <- matrix(Znew, nrow=1)
     if(class(Znew) == "data.frame") Znew <- data.matrix(Znew)
