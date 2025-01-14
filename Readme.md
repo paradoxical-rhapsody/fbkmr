@@ -53,7 +53,7 @@ X <- dat$X
 
 Rember when analyzing real datasets, we need to standardize the Z (exposure variables). To prevent potential sigularity problems, it would be great also standardize the covariate X, as long as it make sense. Too much categorical covariates may cause the program convergence problematicly, thus, it would be better using fewer categorical covariates or just combine categories in a reasonable way.
 
-When analyzing real datasets, X here should be a model matrix, which can be generated in a similar way doing linear regression:
+When analyzing real datasets, X here **must be a model matrix**, which can be generated in a similar way doing linear regression:
 ```r
 data <- data.frame(y = y, x = X)
 x=model.matrix(y ~ x,data=data)
@@ -70,7 +70,7 @@ res <- persp(z1, z2, hgrid.true, theta = 30, phi = 20, expand = 0.5,
 ![True exposure-response function](https://github.com/junwei-lu/fbkmr/blob/main/figs/surf.png)
 
 ### Fit FBKMR
-
+Before you fit the model, you need to make sure X here **must be a model matrix** where categorical variables are converted to dummy variables. See the step above or you might have error.
 To fit the FBKMR model, we use the `skmbayes` function which implements data sketching for scalability. 
 ```r
 set.seed(111)
