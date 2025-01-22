@@ -4,7 +4,7 @@
 \alias{postmeanhnew_wasp}
 \title{Compute the posterior mean and variance of \code{h} at a new predictor values}
 \usage{
-postmeanhnew_wasp(fit, X, y, Z, Znew = NULL, sel = NULL, method = "approx")
+postmeanhnew_wasp(fit, X, y, Z, Znew = NULL, sel = NULL)
 }
 \arguments{
 \item{fit}{An object containing the results returned by a the \code{kmbayes} function}

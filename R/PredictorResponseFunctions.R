@@ -26,7 +26,7 @@ PredictorResponseUnivarVar <- function(whichz = 1, fit, y, Z, X, method = "appro
     }
 
     if (method %in% c("approx", "exact")) {
-      preds <- postmeanhnew_wasp(fit = fit, y = y, Z = Z, X = X, Znew = newz.grid, sel = sel, method=method)
+      preds <- postmeanhnew_wasp(fit = fit, y = y, Z = Z, X = X, Znew = newz.grid, sel = sel)
       preds.plot <- preds$postmean
       se.plot <- sqrt(diag(preds$postvar))/sqrt(n_subset)
     } else {
@@ -53,17 +53,16 @@ PredictorResponseUnivarVar <- function(whichz = 1, fit, y, Z, X, method = "appro
 #' @param ngrid number of grid points to cover the range of each predictor (column in \code{Z})
 #' @param min.plot.dist specifies a minimum distance that a new grid point needs to be from an observed data point in order to compute the prediction; points further than this will not be computed
 #' @param center flag for whether to scale the exposure-response function to have mean zero
-#' @param n.cores number of cores for parallel computing
 #' @details For guided examples, go to \url{https://jenfb.github.io/bkmr/overview.html}
 #'
 #' @export
-PredictorResponseUnivar <- function(fit, y = NULL, Z = NULL, X = NULL, which.z = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), n_subset=1, n.cores=NULL, ...) {
+PredictorResponseUnivar <- function(fit, y = NULL, Z = NULL, X = NULL, which.z = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), n_subset=1, ...) {
   if (class(fit)[1]=='bkmrfit'){fit<-list(fit)}
   n_subset=length(fit)
   pred.resp.univar<-list()
 
   parallel::detectCores()
-  if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
+  n.cores <- ceiling(parallel::detectCores()/2)
   my.cluster <- parallel::makeCluster(n.cores)
   doParallel::registerDoParallel(cl = my.cluster)
 
@@ -143,7 +142,7 @@ PredictorResponseBivarPair <- function(fit, y, Z, X, whichz1 = 1, whichz2 = 2, w
     }
 
     if (method %in% c("approx", "exact")) {
-      preds <- postmeanhnew_wasp(fit = fit, y = y, Z = Z, X = X, Znew = newz.grid, sel = sel, method=method)
+      preds <- postmeanhnew_wasp(fit = fit, y = y, Z = Z, X = X, Znew = newz.grid, sel = sel)
       preds.plot <- preds$postmean
       se.plot <- sqrt(diag(preds$postvar))/sqrt(n_subset)
     } else {
@@ -171,17 +170,15 @@ PredictorResponseBivarPair <- function(fit, y, Z, X, whichz1 = 1, whichz2 = 2, w
 #' @param z.pairs data frame showing which pairs of pollutants to plot
 #' @param ngrid number of grid points in each dimension
 #' @param verbose TRUE or FALSE: flag of whether to print intermediate output to the screen
-#' @param n.cores number of cores for parallel computing
-#'
 #' @details For guided examples, go to \url{https://jenfb.github.io/bkmr/overview.html}
 #' @export
-PredictorResponseBivar <- function(fit, y = NULL, Z = NULL, X = NULL, z.pairs = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), verbose = TRUE,  n_subset=1, n.cores=NULL,...) {
+PredictorResponseBivar <- function(fit, y = NULL, Z = NULL, X = NULL, z.pairs = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), verbose = TRUE,  n_subset=1,...) {
   if (class(fit)[1]=='bkmrfit'){fit<-list(fit)}
   n_subset=length(fit)
   pred.resp.bivar<-list()
 
   parallel::detectCores()
-  if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
+  n.cores <- ceiling(parallel::detectCores()/2)
   my.cluster <- parallel::makeCluster(n.cores)
   doParallel::registerDoParallel(cl = my.cluster)
 

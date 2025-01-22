@@ -17,7 +17,6 @@ skmbayes(
   file_path = NULL,
   save_loc = FALSE,
   linprog = TRUE,
-  n.cores = NULL,
   ...
 )
 }
@@ -45,8 +44,6 @@ skmbayes(
 \item{save_loc}{TRUE or FALSE indicator for whether to save intemediate or final result on local machine.}
 
 \item{linprog}{TRUE or FALSE: flag indicating whether to preform linear programming for combining samples from subset MCMC results.}
-
-\item{n.cores}{number of cores for parallel computing}
 
 \item{family}{a description of the error distribution and link function to be used in the model. Currently implemented for \code{gaussian} and \code{binomial} families.}
 
@@ -86,6 +83,6 @@ X <- dat$X
 
 ## Fit model with 5 subsests
 set.seed(111)
-fitkm <- skmbayes(y = y, Z = Z, X = X, iter = 1000, n_subset=5, verbose = FALSE, varsel = FALSE, linprog=TRUE, est.h=FALSE)
+fitkm <- skmbayes(y = y, Z = Z, X = X, iter = 1000, n_subset=5, verbose = FALSE, varsel = FALSE)
 
 }
