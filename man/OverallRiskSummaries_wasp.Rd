@@ -14,7 +14,8 @@ OverallRiskSummaries_wasp(
   q.fixed = 0.5,
   method = "approx",
   sel = NULL,
-  n_subset = 1
+  n_subset = 1,
+  n.cores = NULL
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ OverallRiskSummaries_wasp(
 \item{sel}{selects which iterations of the MCMC sampler to use for inference; see details}
 
 \item{n_subset}{number of subsets to split the data}
+
+\item{n.cores}{number of cores for parallel computing}
 }
 \description{
 Compare estimated \code{h} function when all predictors are at a particular quantile to when all are at a second fixed quantile
