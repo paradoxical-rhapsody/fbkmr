@@ -9,7 +9,7 @@ beta.update <- function(X, Vinv, y, sigsq.eps,n_subset=1) {
   cholVbeta <- try(chol(Vbeta),silent = TRUE)
   if(class(cholVbeta)[1] == "try-error") {
     sigsvd_vbeta <- svd(Vbeta)
-    cholVbeta <- t(sigsvd_vbeta$v %*% (t(sigsvd_vbeta$u) * sqrt(sigsvd_vbeta$d)))}
+    cholVbeta <- t(sigsvd$v %*% (t(sigsvd$u) * sqrt(sigsvd$d)))}
 
   betahat <- Vbeta %*% XVinv %*% y
   n01 <- rnorm(ncol(X))

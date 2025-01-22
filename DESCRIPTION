@@ -1,13 +1,40 @@
 Package: fbkmr
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Fast Bayesian Kernel Machine Regression
+Version: 0.1.1
+Authors@R: c(person("Junwei", "Lu", 
+                  email = "junweilu@hsph.harvard.edu", 
+                  role = c("aut", "cre")),
+            person('Jiangshan', 'Zhang',
+                  email = 'jiszhang@ucdavis.edu',
+                  role = c("aut", "ctr")),
+            person('Aaron', 'Sonabend',
+                  role = c("aut")),
+            person('Joel', 'Schwartz',
+                  role = c("aut")),
+            person('Brent', 'Coull',
+                  role = c("aut"))
+                  )
+Maintainer: Junwei Lu <junweilu@hsph.harvard.edu>
+Description: Implements a fast Bayesian kernel machine regression method that addresses scalability issues for massive datasets by employing a divide-and-conquer strategy. This approach enables efficient computation for large datasets while maintaining robust inference capabilities.
+License: MIT
 Encoding: UTF-8
+LazyData: true
 RoxygenNote: 7.2.1
 NeedsCompilation: no
-Packaged: 2025-01-22 18:38:11 UTC; jiang
+Packaged: 2022-11-21 17:44:53 UTC; jiang
+Imports:
+    KernSmooth,
+    doParallel,
+    fields,
+    foreach,
+    lpSolve,
+    magrittr,
+    mvtnorm,
+    nlme,
+    parallel,
+    slam,
+    stats,
+    utils,
+    Matrix (>= 1.3),
+    tmvtnorm

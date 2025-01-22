@@ -1,7 +1,3 @@
-
-
-
-
 wasp_bayes<-function(n_subset, mesh_size=100, n_samp=100, Z, X, kmbayes_res,iter,... ) {
 
 
@@ -309,7 +305,6 @@ hnew.update_wasp<-function(samp_post,y,X,Z,Znew){
 #' @param ztest optional vector indicating on which variables in Z to conduct variable selection (the remaining variables will be forced into the model).
 #' @param rmethod for those predictors being forced into the \code{h} function, the method for sampling the \code{r[m]} values. Takes the value of 'varying' to allow separate \code{r[m]} for each predictor; 'equal' to force the same \code{r[m]} for each predictor; or 'fixed' to fix the \code{r[m]} to their starting values
 #' @param est.h TRUE or FALSE: indicator for whether to sample from the posterior distribution of the subject-specific effects h_i within the main sampler. This will slow down the model fitting.
-#' @param n.cores number of cores for parallel computing
 #'
 #' @return an object of class "bkmrfit", which has the associated methods:
 #' \itemize{
@@ -319,7 +314,7 @@ hnew.update_wasp<-function(samp_post,y,X,Z,Znew){
 #'
 #' @import utils foreach doParallel parallel
 
-kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000,varsel=FALSE, est.h=TRUE, Znew=NULL,knots=NULL, file_path=NULL,save_loc=FALSE,n.cores=NULL,...){
+kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000,varsel=FALSE, est.h=TRUE, Znew=NULL,knots=NULL, file_path=NULL,save_loc=FALSE,...){
   X=as.matrix(X)
 
   kmbayes_res<-list()
@@ -331,7 +326,7 @@ kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000,varsel=FALSE, est.h=
 
 
   parallel::detectCores()
-  if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
+  n.cores <- ceiling(parallel::detectCores()/2)
   my.cluster <- parallel::makeCluster(n.cores)
   doParallel::registerDoParallel(cl = my.cluster)
 
@@ -355,10 +350,6 @@ kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000,varsel=FALSE, est.h=
     if(is.null(knots)){knots100=NULL}
     if (class(knots100)[1]=='try-error'){knots100=NULL}
     kmbayes_res<-kmbayes(y = y_i, Z = Z_i, X = X_i, Znew=Znew, iter = iter, knots=knots100, control.param=list(lambda.jump=rep(2.8,1),mu.lambda=rep(15,1),sigma.lambda=rep(8,1)),verbose = F, varsel = varsel,sketch.type = 'sub_sampling',p=ceiling(nrow(Z)/n_subset),n_subset=n_subset, indx=indx,Snum=1,est.h = FALSE,h.post.type = h.post.type,est.last.h = 1000)
-    if (est.h==TRUE){
-      preds <- postmeanhnew_wasp(fit = kmbayes_res, y = y_i, Z = Z_i, X = X_i, Znew = Znew, sel = sel)
-      preds$postvar<-preds$postvar/n_subset
-      kmbayes_res$h<-preds}
 
     if (save_loc==T){
       saveRDS(kmbayes_res, file = paste0(file_path,'/wasp_res_',i,'.RDS'))
@@ -491,8 +482,6 @@ linear_prog<-function(kmbayes_res=kmbayes_res,n_subset=n_subset,iter=iter,n_samp
 #' @param rmethod for those predictors being forced into the \code{h} function, the method for sampling the \code{r[m]} values. Takes the value of 'varying' to allow separate \code{r[m]} for each predictor; 'equal' to force the same \code{r[m]} for each predictor; or 'fixed' to fix the \code{r[m]} to their starting values
 #' @param est.h TRUE or FALSE: indicator for whether to sample from the posterior distribution of the subject-specific effects h_i within the main sampler. This will slow down the model fitting.
 #' @param save_loc TRUE or FALSE indicator for whether to save intemediate or final result on local machine.
-#' @param n.cores number of cores for parallel computing
-#'
 #' @return an object of class "bkmrfit", which has the associated methods:
 #' \itemize{
 #'   \item \code{\link{print}} (i.e., \code{\link{print.bkmrfit}})
@@ -509,76 +498,76 @@ linear_prog<-function(kmbayes_res=kmbayes_res,n_subset=n_subset,iter=iter,n_samp
 #'
 #' ## Fit model with 5 subsests
 #' set.seed(111)
-#' fitkm <- skmbayes(y = y, Z = Z, X = X, iter = 1000, n_subset=5, verbose = FALSE, varsel = FALSE, linprog=TRUE, est.h=FALSE)
+#' fitkm <- skmbayes(y = y, Z = Z, X = X, iter = 1000, n_subset=5, verbose = FALSE, varsel = FALSE)
 #'
-#' @import gurobi mvtnorm foreach doParallel lpSolve Matrix gurobi KernSmooth nlme magrittr fields slam parallel
+#' @import  mvtnorm foreach doParallel lpSolve Matrix KernSmooth nlme magrittr fields slam parallel
 #' @export
 #'
 
 
 
-skmbayes<-function(Z,X,y,n_subset=1,n_samp=200, iter=1000,varsel=FALSE, est.h=TRUE, Znew=NULL,file_path=NULL,save_loc=FALSE, linprog=TRUE, n.cores=NULL, ...){
+skmbayes<-function(Z,X,y,n_subset=1,n_samp=200, iter=1000,varsel=FALSE, est.h=TRUE, Znew=NULL,file_path=NULL,save_loc=FALSE, ...){
 
   time1 <- Sys.time()
   if (is.null(file_path)){file_path=getwd()}
 
-  kmbayes_res<-kmbayes_Wasp(Z=Z,X=X,y=y,n_subset=n_subset,n_samp=n_samp, iter=iter,varsel=varsel, est.h=est.h, Znew=Znew,file_path=file_path,save_loc=save_loc,n.cores=n.cores,...)
+  kmbayes_res<-kmbayes_Wasp(Z=Z,X=X,y=y,n_subset=n_subset,n_samp=n_samp, iter=iter,varsel=varsel, est.h=est.h, Znew=Znew,file_path=file_path,save_loc=save_loc,...)
 
-  if (linprog==TRUE){
-    if(save_loc==T){
-      for (j in 1:n_subset){
-        kmbayes_res[[j]]<-readRDS(file = paste0(file_path,'/wasp_res_',j,'.RDS'))
-      }
-    }
+  # if (linprog==TRUE){
+  #   if(save_loc==T){
+  #     for (j in 1:n_subset){
+  #       kmbayes_res[[j]]<-readRDS(file = paste0(file_path,'/wasp_res_',j,'.RDS'))
+  #     }
+  #   }
 
-    N_part <- floor(sqrt(n_subset))
-    res_split <- split(seq(1,n_subset,1), ceiling(seq_along(seq(1,n_subset,1))/N_part))
+  #   N_part <- floor(sqrt(n_subset))
+  #   res_split <- split(seq(1,n_subset,1), ceiling(seq_along(seq(1,n_subset,1))/N_part))
 
-    parallel::detectCores()
-    if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
-    my.cluster <- parallel::makeCluster(n.cores)
-    doParallel::registerDoParallel(cl = my.cluster)
+  #   parallel::detectCores()
+  #   n.cores <- ceiling(parallel::detectCores()/2)
+  #   my.cluster <- parallel::makeCluster(n.cores)
+  #   doParallel::registerDoParallel(cl = my.cluster)
 
-    Res_final_split<-foreach(i=1:ceiling(n_subset/N_part))%dopar%{
-      sel <- res_split[[i]]
-      kmbayes_res_split<-kmbayes_res[sel]
+  #   Res_final_split<-foreach(i=1:ceiling(n_subset/N_part))%dopar%{
+  #     sel <- res_split[[i]]
+  #     kmbayes_res_split<-kmbayes_res[sel]
 
-      Res_final_s<-linear_prog(kmbayes_res=kmbayes_res_split,n_subset=length(sel),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
+  #     Res_final_s<-linear_prog(kmbayes_res=kmbayes_res_split,n_subset=length(sel),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
 
-      if (save_loc==T){
-        saveRDS(Res_final_s, file = paste0(file_path,'/comb_',i,'.RDS'))
-      }
-      return(Res_final_s)
-    }
-    stopCluster(cl = my.cluster)
+  #     if (save_loc==T){
+  #       saveRDS(Res_final_s, file = paste0(file_path,'/comb_',i,'.RDS'))
+  #     }
+  #     return(Res_final_s)
+  #   }
+  #   stopCluster(cl = my.cluster)
 
-    message(paste('Split linear programming is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
+  #   message(paste('Split linear programming is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
 
-    Res_final<-linear_prog(kmbayes_res=Res_final_split,n_subset=ceiling(n_subset/N_part),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
+  #   Res_final<-linear_prog(kmbayes_res=Res_final_split,n_subset=ceiling(n_subset/N_part),iter=iter,n_samp=n_samp,Z=Z,X=X,y=y,est.h = est.h)
 
-    message(paste('FBKMR is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
+  #   message(paste('FBKMR is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
 
-        time2 <- Sys.time()
+  #       time2 <- Sys.time()
 
-        Res_final$X <- X
-        Res_final$Z <- Z
-        Res_final$y <- y
-        Res_final$n_subset <- n_subset
-        Res_final$iter <- iter
-        Res_final$est.h <-est.h
-        Res_final$varsel <- varsel
-        Res_final$lambda<-as.matrix(Res_final$lambda)
-        Res_final$time1 <-time1
-        Res_final$time2 <-time2
+  #       Res_final$X <- X
+  #       Res_final$Z <- Z
+  #       Res_final$y <- y
+  #       Res_final$n_subset <- n_subset
+  #       Res_final$iter <- iter
+  #       Res_final$est.h <-est.h
+  #       Res_final$varsel <- varsel
+  #       Res_final$lambda<-as.matrix(Res_final$lambda)
+  #       Res_final$time1 <-time1
+  #       Res_final$time2 <-time2
 
-        if(save_loc==T){saveRDS(Res_final, file = paste0(file_path,'/wasp_res_final','.RDS'))}
-        class(Res_final) <- c("bkmrfit", class(Res_final))
-        return(Res_final)
-  }
-  if(linprog==F){
+  #       if(save_loc==T){saveRDS(Res_final, file = paste0(file_path,'/wasp_res_final','.RDS'))}
+  #       class(Res_final) <- c("bkmrfit", class(Res_final))
+  #       return(Res_final)
+  # }
+  #if(linprog==F){
     message(paste('FBKMR is completed without overall result, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
     return(kmbayes_res)
-  }
+  #}
 
 
   }

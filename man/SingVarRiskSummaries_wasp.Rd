@@ -17,7 +17,6 @@ SingVarRiskSummaries_wasp(
   sel = NULL,
   z.names = colnames(Z),
   n_subset = 1,
-  n.cores = NULL,
   ...
 )
 }
@@ -43,8 +42,6 @@ SingVarRiskSummaries_wasp(
 \item{z.names}{optional vector of names for the columns of \code{z}}
 
 \item{n_subset}{number of subsets to split the data}
-
-\item{n.cores}{number of cores for parallel computing}
 
 \item{...}{other argumentd to pass on to the prediction function}
 }

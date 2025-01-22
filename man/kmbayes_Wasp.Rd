@@ -17,7 +17,6 @@ kmbayes_Wasp(
   knots = NULL,
   file_path = NULL,
   save_loc = FALSE,
-  n.cores = NULL,
   ...
 )
 }
@@ -41,8 +40,6 @@ kmbayes_Wasp(
 \item{knots}{optional matrix of knot locations for implementing the Gaussian predictive process of Banerjee et al (2008). Currently only implemented for models without a random intercept.}
 
 \item{file_path}{working directory for saving the resulting rds files.}
-
-\item{n.cores}{number of cores for parallel computing}
 
 \item{family}{a description of the error distribution and link function to be used in the model. Currently implemented for \code{gaussian} and \code{binomial} families.}
 
