@@ -19,6 +19,7 @@ PredictorResponseBivar(
   z.names = colnames(Z),
   verbose = TRUE,
   n_subset = 1,
+  n.cores = NULL,
   ...
 )
 }
@@ -50,6 +51,8 @@ PredictorResponseBivar(
 \item{verbose}{TRUE or FALSE: flag of whether to print intermediate output to the screen}
 
 \item{n_subset}{number of subsets to split the data}
+
+\item{n.cores}{number of cores for parallel computing}
 
 \item{...}{other argumentd to pass on to the prediction function}
 }
