@@ -8,13 +8,13 @@
 postmeanhnew_wasp<-function(fit,X,y,Z, Znew = NULL, sel = NULL) {
   if (!is.null(Znew)) {
     if(is.null(dim(Znew))) Znew <- matrix(Znew, nrow=1)
-    if(class(Znew) == "data.frame") Znew <- data.matrix(Znew)
+    if(class(Znew)[1] == "data.frame") Znew <- data.matrix(Znew)
   }
 
   len <- length(fit$lambda)
   sigsq.eps <- mean(fit$sigsq.eps[(len/2+1):len])
   r <-colMeans(fit$r[(len/2+1):len,])
-  beta <- colMeans(fit$beta[(len/2+1):len,])
+  beta <- colMeans(as.matrix(fit$beta[(len/2+1):len,]))
   lambda <-mean(fit$lambda[(len/2+1):len])
 
   K<-makeKpart_wasp(r, Z)
