@@ -26,17 +26,37 @@ riskSummary.approx_wasp <- function(point1, point2, preds.fun, n_subset=1,...) {
 #' @import utils foreach doParallel parallel
 #' @export
 #'
-OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, Z.q=NULL, qs = seq(0.25, 0.75, by = 0.05), q.fixed = 0.5, method = "approx", sel = NULL, n_subset=1, n.cores=NULL) {
+OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, parallel = FALSE, n_cores = NULL, Z.q=NULL, qs = seq(0.25, 0.75, by = 0.05), q.fixed = 0.5, method = "approx", sel = NULL, n_subset=1, ...) {
   if (class(fit)[1]=='bkmrfit'){fit<-list(fit)}
   n_subset=length(fit)
   risks.overall<-list()
 
-  parallel::detectCores()
-
-  if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
-  my.cluster <- parallel::makeCluster(n.cores)
-  doParallel::registerDoParallel(cl = my.cluster)
-
+  # parallel::detectCores()
+	# 
+	# if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
+	# my.cluster <- parallel::makeCluster(n.cores)
+	# doParallel::registerDoParallel(cl = my.cluster)
+	# ---- PARALLEL SEPUP ----
+	if (parallel) {
+		if (is.null(n_cores)) {
+			n_cores <- ceiling(parallel::detectCores()/2)
+		}
+		nphys <- parallel::detectCores()
+		if (n_cores > nphys) {
+			warning(sprintf("n_cores(%d) > detectCores(%d)", n_cores, nphys))
+		}
+		
+		cl <- parallel::makeCluster(n_cores)
+		on.exit({
+			parallel::stopCluster(cl)
+			doParallel::registerDoSEQ()
+		}, add = TRUE)
+		
+		doParallel::registerDoParallel(cl)
+		
+		message("Parallel tasks been started: ", foreach::getDoParName(),
+										", workers = ", foreach::getDoParWorkers())
+	}
 
   risks.overall<-foreach(j=1: n_subset)%dopar%{
     if (inherits(fit[[j]], "bkmrfit")) {
@@ -56,7 +76,8 @@ OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, Z.q=NUL
     df <- data.frame(quantile = qs, df)
     return( df)
   }
-  stopCluster(cl = my.cluster)
+  # stopCluster(cl = my.cluster)
+  if (parallel) stopCluster(cl)
 
 
   risks.overall_overall<-risks.overall[[1]]
@@ -117,16 +138,37 @@ VarRiskSummary_wasp <- function(whichz = 1, fit, y = NULL, Z = NULL, X = NULL, Z
 #' @param n.cores number of cores for parallel computing
 #' @import utils foreach doParallel parallel
 #' @export
-SingVarRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, Z.q=NULL, which.z = 1:ncol(Z), qs.diff = c(0.25, 0.75), q.fixed = c(0.25, 0.50, 0.75), method = "approx", sel = NULL, z.names = colnames(Z), n_subset=1, n.cores=NULL,...) {
+SingVarRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, parallel = FALSE, n_cores = NULL, Z.q=NULL, which.z = 1:ncol(Z), qs.diff = c(0.25, 0.75), q.fixed = c(0.25, 0.50, 0.75), method = "approx", sel = NULL, z.names = colnames(Z), n_subset=1, n.cores=NULL,...) {
 
   if (class(fit)[1]=='bkmrfit'){fit<-list(fit)}
   n_subset=length(fit)
   risks.singvar<-list()
 
-  parallel::detectCores()
-  if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
-  my.cluster <- parallel::makeCluster(n.cores)
-  doParallel::registerDoParallel(cl = my.cluster)
+  # parallel::detectCores()
+	# if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
+	# my.cluster <- parallel::makeCluster(n.cores)
+	# doParallel::registerDoParallel(cl = my.cluster)
+	# ---- PARALLELIZATION SETUP ----
+	if (parallel) {
+		if (is.null(n_cores)) {
+			n_cores <- ceiling(parallel::detectCores()/2)
+		}
+		nphys <- parallel::detectCores()
+		if (n_cores > nphys) {
+			warning(sprintf("n_cores(%d) > detectCores(%d)", n_cores, nphys))
+		}
+		
+		cl <- parallel::makeCluster(n_cores)   # default: PSOCK
+		on.exit({
+			parallel::stopCluster(cl)
+			doParallel::registerDoSEQ()         # stop parallelization
+		}, add = TRUE)
+		
+		doParallel::registerDoParallel(cl)
+		
+		message("Parallelization started: ", foreach::getDoParName(),
+										", workers = ", foreach::getDoParWorkers())
+	}
 
   risks.singvar<-foreach(j=1: n_subset)%dopar%{
     if (inherits(fit[[j]], "bkmrfit")) {
@@ -151,7 +193,7 @@ SingVarRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, Z.q=NUL
 
     return(df)
   }
-  stopCluster(cl = my.cluster)
+  # stopCluster(cl = my.cluster)
 
 
   risks.singvar_overall<-risks.singvar[[1]]

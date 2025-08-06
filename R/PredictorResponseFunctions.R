@@ -56,15 +56,37 @@ PredictorResponseUnivarVar <- function(whichz = 1, fit, y, Z, X, method = "appro
 #' @details For guided examples, go to \url{https://jenfb.github.io/bkmr/overview.html}
 #'
 #' @export
-PredictorResponseUnivar <- function(fit, y = NULL, Z = NULL, X = NULL, which.z = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), n_subset=1, ...) {
+PredictorResponseUnivar <- function(fit, y = NULL, Z = NULL, X = NULL, parallel = FALSE, n_cores = NULL, which.z = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), n_subset=1, ...) {
   if (class(fit)[1]=='bkmrfit'){fit<-list(fit)}
   n_subset=length(fit)
   pred.resp.univar<-list()
 
-  parallel::detectCores()
-  n.cores <- ceiling(parallel::detectCores()/2)
-  my.cluster <- parallel::makeCluster(n.cores)
-  doParallel::registerDoParallel(cl = my.cluster)
+  # parallel::detectCores()
+	# n.cores <- ceiling(parallel::detectCores()/2)
+	# my.cluster <- parallel::makeCluster(n.cores)
+	# doParallel::registerDoParallel(cl = my.cluster)
+	# ---- PARALLEL SEPUP ----
+	if (parallel) {
+		if (is.null(n_cores)) {
+			n_cores <- ceiling(parallel::detectCores()/2)
+		}
+		nphys <- parallel::detectCores()
+		if (n_cores > nphys) {
+			warning(sprintf("n_cores(%d) > detectCores(%d)", n_cores, nphys))
+		}
+		
+		cl <- parallel::makeCluster(n_cores)
+		on.exit({
+			parallel::stopCluster(cl)
+			doParallel::registerDoSEQ()
+		}, add = TRUE)
+		
+		doParallel::registerDoParallel(cl)
+		
+		message("Parallel tasks been started: ", foreach::getDoParName(),
+										", workers = ", foreach::getDoParWorkers())
+	}
+	
 
   pred.resp.univar<-foreach(j=1: n_subset)%dopar%{
     if (inherits(fit[[j]], "bkmrfit")) {
@@ -90,7 +112,7 @@ PredictorResponseUnivar <- function(fit, y = NULL, Z = NULL, X = NULL, which.z =
     df$variable <- factor(df$variable, levels = z.names[which.z])
     return(df)
   }
-  stopCluster(cl = my.cluster)
+  # stopCluster(cl = my.cluster)
 
 
   pred.resp.univar_overall<-pred.resp.univar[[1]]
@@ -172,15 +194,36 @@ PredictorResponseBivarPair <- function(fit, y, Z, X, whichz1 = 1, whichz2 = 2, w
 #' @param verbose TRUE or FALSE: flag of whether to print intermediate output to the screen
 #' @details For guided examples, go to \url{https://jenfb.github.io/bkmr/overview.html}
 #' @export
-PredictorResponseBivar <- function(fit, y = NULL, Z = NULL, X = NULL, z.pairs = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), verbose = TRUE,  n_subset=1,...) {
+PredictorResponseBivar <- function(fit, y = NULL, Z = NULL, X = NULL, parallel = FALSE, n_cores = NULL, z.pairs = NULL, method = "approx", ngrid = 50, q.fixed = 0.5, sel = NULL, min.plot.dist = Inf, center = TRUE, z.names = colnames(Z), verbose = TRUE,  n_subset=1,...) {
   if (class(fit)[1]=='bkmrfit'){fit<-list(fit)}
   n_subset=length(fit)
   pred.resp.bivar<-list()
 
-  parallel::detectCores()
-  n.cores <- ceiling(parallel::detectCores()/2)
-  my.cluster <- parallel::makeCluster(n.cores)
-  doParallel::registerDoParallel(cl = my.cluster)
+# parallel::detectCores()
+	# n.cores <- ceiling(parallel::detectCores()/2)
+	# my.cluster <- parallel::makeCluster(n.cores)
+	# doParallel::registerDoParallel(cl = my.cluster)
+	# ---- PARALLELIZATION SETUP ----
+	if (parallel) {
+		if (is.null(n_cores)) {
+			n_cores <- ceiling(parallel::detectCores()/2)
+		}
+		nphys <- parallel::detectCores()
+		if (n_cores > nphys) {
+			warning(sprintf("n_cores(%d) > detectCores(%d)", n_cores, nphys))
+		}
+		
+		cl <- parallel::makeCluster(n_cores)
+		on.exit({
+			parallel::stopCluster(cl)
+			doParallel::registerDoSEQ()
+		}, add = TRUE)
+		
+		doParallel::registerDoParallel(cl)
+		
+		message("Parallelization started: ", foreach::getDoParName(),
+										", workers = ", foreach::getDoParWorkers())
+	}
 
   pred.resp.bivar<-foreach(j=1: n_subset)%dopar%{
   if (inherits(fit[[j]], "bkmrfit")) {
@@ -234,7 +277,7 @@ PredictorResponseBivar <- function(fit, y = NULL, Z = NULL, X = NULL, z.pairs = 
   return(df)
   }
 
-  stopCluster(cl = my.cluster)
+  # stopCluster(cl = my.cluster)
 
   pred.resp.bivar_overall<-pred.resp.bivar[[1]]  ##median combination of normal distributions is taking average of their mean and std
   if(n_subset>1){##median combination of normal distributions is taking average of their mean and std

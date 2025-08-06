@@ -314,7 +314,7 @@ hnew.update_wasp<-function(samp_post,y,X,Z,Znew){
 #'
 #' @import utils foreach doParallel parallel
 
-kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000,varsel=FALSE, est.h=TRUE, Znew=NULL,knots=NULL, file_path=NULL,save_loc=FALSE,...){
+kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000, parallel=FALSE, n_cores=NULL, varsel=FALSE, est.h=TRUE, Znew=NULL,knots=NULL, file_path=NULL,save_loc=FALSE,...){
   X=as.matrix(X)
 
   kmbayes_res<-list()
@@ -325,10 +325,31 @@ kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000,varsel=FALSE, est.h=
   kmbayes_res_list=list()
 
 
-  parallel::detectCores()
-  n.cores <- ceiling(parallel::detectCores()/2)
-  my.cluster <- parallel::makeCluster(n.cores)
-  doParallel::registerDoParallel(cl = my.cluster)
+  # parallel::detectCores()
+	# n.cores <- ceiling(parallel::detectCores()/2)
+	# my.cluster <- parallel::makeCluster(n.cores)
+	# doParallel::registerDoParallel(cl = my.cluster)
+	# ---- PARALLELIZATION SETUP ----
+	if (parallel) {
+		if (is.null(n_cores)) {
+			n_cores <- ceiling(parallel::detectCores()/2)
+		}
+		nphys <- parallel::detectCores()
+		if (n_cores > nphys) {
+			warning(sprintf("n_cores(%d) > detectCores(%d)", n_cores, nphys))
+		}
+		
+		cl <- parallel::makeCluster(n_cores)   # default: PSOCK
+		on.exit({
+			parallel::stopCluster(cl)
+			doParallel::registerDoSEQ()         # stop parallelation
+		}, add = TRUE)
+		
+		doParallel::registerDoParallel(cl)
+		
+		message("Parallelization started: ", foreach::getDoParName(),
+										", workers = ", foreach::getDoParWorkers())
+	}
 
   kmbayes_res_list<-foreach(i =1:ceiling(n_subset))%dopar%{
     if (i <=mod){
@@ -359,7 +380,7 @@ kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000,varsel=FALSE, est.h=
 
     return(kmbayes_res)
   }
-  stopCluster(cl = my.cluster)
+  # stopCluster(cl = my.cluster)
   message(paste('Subset MCMC is completed, system time is: ', round(difftime(Sys.time(),time1, units = "mins"),2),'mins'))
 
   # for (i in 1:ceiling(n_subset)){
@@ -482,6 +503,8 @@ linear_prog<-function(kmbayes_res=kmbayes_res,n_subset=n_subset,iter=iter,n_samp
 #' @param rmethod for those predictors being forced into the \code{h} function, the method for sampling the \code{r[m]} values. Takes the value of 'varying' to allow separate \code{r[m]} for each predictor; 'equal' to force the same \code{r[m]} for each predictor; or 'fixed' to fix the \code{r[m]} to their starting values
 #' @param est.h TRUE or FALSE: indicator for whether to sample from the posterior distribution of the subject-specific effects h_i within the main sampler. This will slow down the model fitting.
 #' @param save_loc TRUE or FALSE indicator for whether to save intemediate or final result on local machine.
+#' @param parallel Bool, whether to do parallel tasks. 
+#' @param n_cores Number of cores for parallel tasks
 #' @return an object of class "bkmrfit", which has the associated methods:
 #' \itemize{
 #'   \item \code{\link{print}} (i.e., \code{\link{print.bkmrfit}})
@@ -506,12 +529,12 @@ linear_prog<-function(kmbayes_res=kmbayes_res,n_subset=n_subset,iter=iter,n_samp
 
 
 
-skmbayes<-function(Z,X,y,n_subset=1,n_samp=200, iter=1000,varsel=FALSE, est.h=TRUE, Znew=NULL,file_path=NULL,save_loc=FALSE, ...){
+skmbayes <- function(Z,X,y,n_subset=1,n_samp=200, iter=1000, parallel=FALSE, n_cores=NULL, varsel=FALSE, est.h=TRUE, Znew=NULL,file_path=NULL,save_loc=FALSE, ...){
 
   time1 <- Sys.time()
   if (is.null(file_path)){file_path=getwd()}
 
-  kmbayes_res<-kmbayes_Wasp(Z=Z,X=X,y=y,n_subset=n_subset,n_samp=n_samp, iter=iter,varsel=varsel, est.h=est.h, Znew=Znew,file_path=file_path,save_loc=save_loc,...)
+	kmbayes_res<-kmbayes_Wasp(Z=Z,X=X,y=y,n_subset=n_subset,n_samp=n_samp, iter=iter, parallel=parallel, n_cores=n_cores, varsel=varsel, est.h=est.h, Znew=Znew,file_path=file_path,save_loc=save_loc,...)
 
   # if (linprog==TRUE){
   #   if(save_loc==T){

@@ -12,10 +12,33 @@ postmeanhnew_wasp<-function(fit,X,y,Z, Znew = NULL, sel = NULL) {
   }
 
   len <- length(fit$lambda)
-  sigsq.eps <- mean(fit$sigsq.eps[(len/2+1):len])
-  r <-colMeans(fit$r[(len/2+1):len,])
-  beta <- colMeans(as.matrix(fit$beta[(len/2+1):len,]))
-  lambda <-mean(fit$lambda[(len/2+1):len])
+  # sigsq.eps <- mean(fit$sigsq.eps[(len/2+1):len])
+	# r <-colMeans(fit$r[(len/2+1):len,])
+	# beta <- colMeans(as.matrix(fit$beta[(len/2+1):len,]))
+	# lambda <-mean(fit$lambda[(len/2+1):len])
+
+	## ---------- JUDGE `sel' ----------
+	if (is.null(sel)) {
+		## default：select the right half of samples
+		sel <- (len %/% 2 + 1):len
+	} else if (length(sel) == 1 && sel > 0 && sel < 1) {
+		## fraction -> index
+		sel <- (floor(len * sel) + 1):len
+	} else if (is.logical(sel) && length(sel) == len) {
+		## logical -> index
+		sel <- which(sel)
+	} else if (is.numeric(sel)) {
+		## index: boundary check
+		if (any(sel < 1 | sel > len)) stop("'sel' index out of bounds.")
+	} else {
+		stop("'sel' must be NULL, a proportion in (0,1), a logical vector of length nIter, or an index vector.")
+	}
+	
+	## ---------- SELECT SAMPLES ----------
+	sigsq.eps <- mean(fit$sigsq.eps[sel])
+	r          <- colMeans(fit$r[sel, , drop = FALSE])
+	beta       <- colMeans(as.matrix(fit$beta[sel, , drop = FALSE]))
+	lambda     <- mean(fit$lambda[sel])
 
   K<-makeKpart_wasp(r, Z)
   V <- diag(1, nrow(Z), nrow(Z)) + lambda*K
