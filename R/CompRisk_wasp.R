@@ -48,8 +48,8 @@ OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
 		
 		cl <- parallel::makeCluster(n_cores)
 		on.exit({
-			parallel::stopCluster(cl)
-			doParallel::registerDoSEQ()
+		  parallel::stopCluster(cl)   # 1. Shut down the cluster and free its system resources
+		  foreach::registerDoSEQ()    # 2. Reset the foreach backend to sequential execution
 		}, add = TRUE)
 		
 		doParallel::registerDoParallel(cl)
@@ -209,5 +209,6 @@ SingVarRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
 
 
 }
+
 
 
