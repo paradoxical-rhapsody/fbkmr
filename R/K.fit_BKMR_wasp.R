@@ -341,9 +341,10 @@ kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000, parallel=FALSE, n_c
 		
 		cl <- parallel::makeCluster(n_cores)   # default: PSOCK
 		on.exit({
-		  parallel::stopCluster(cl)   # ① 关闭并释放 cluster 占用的进程/线程等系统资源
-		  foreach::registerDoSEQ()    # ② 把 foreach 的执行后端恢复成默认的串行模式
+		  parallel::stopCluster(cl)   # 1. Shut down the cluster and free its system resources
+		  foreach::registerDoSEQ()    # 2. Reset the foreach backend to sequential execution
 		}, add = TRUE)
+
 		
 		doParallel::registerDoParallel(cl)
 		
@@ -594,4 +595,5 @@ skmbayes <- function(Z,X,y,n_subset=1,n_samp=200, iter=1000, parallel=FALSE, n_c
 
 
   }
+
 
