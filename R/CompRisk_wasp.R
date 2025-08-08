@@ -36,7 +36,7 @@ OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
 	# if(is.null(n.cores)){n.cores <- ceiling(parallel::detectCores()/2)}
 	# my.cluster <- parallel::makeCluster(n.cores)
 	# doParallel::registerDoParallel(cl = my.cluster)
-	# ---- PARALLEL SEPUP ----
+	# ---- PARALLELIZATION SEPUP ----
 	if (parallel) {
 		if (is.null(n_cores)) {
 			n_cores <- ceiling(parallel::detectCores()/2)
@@ -54,7 +54,7 @@ OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
 		
 		doParallel::registerDoParallel(cl)
 		
-		message("Parallel tasks been started: ", foreach::getDoParName(),
+		message("Parallelization started: ", foreach::getDoParName(),
 										", workers = ", foreach::getDoParWorkers())
 	}
 
@@ -76,11 +76,12 @@ OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
     df <- data.frame(quantile = qs, df)
     return( df)
   }
+
+  risks.overall_overall <- risks.overall[[1]]
+				   
   # stopCluster(cl = my.cluster)
   if (parallel) stopCluster(cl)
 
-
-  risks.overall_overall<-risks.overall[[1]]
   if(n_subset>1){##median combination of normal distributions is taking average of their mean and std
     for (i in 2:n_subset){
       risks.overall_overall$est<-risks.overall_overall$est+risks.overall[[i]]$est
@@ -209,6 +210,7 @@ SingVarRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
 
 
 }
+
 
 
 
