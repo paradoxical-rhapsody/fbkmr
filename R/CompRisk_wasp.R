@@ -80,7 +80,7 @@ OverallRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
   risks.overall_overall <- risks.overall[[1]]
 				   
   # stopCluster(cl = my.cluster)
-  if (parallel) stopCluster(cl)
+  # if (parallel) stopCluster(cl)
 
   if(n_subset>1){##median combination of normal distributions is taking average of their mean and std
     for (i in 2:n_subset){
@@ -210,6 +210,7 @@ SingVarRiskSummaries_wasp <- function(fit, y = NULL, Z = NULL, X = NULL, paralle
 
 
 }
+
 
 
 
