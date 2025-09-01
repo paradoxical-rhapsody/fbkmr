@@ -388,7 +388,7 @@ kmbayes_Wasp<-function(Z,X,y,n_subset,n_samp=200, iter=1000, parallel=FALSE, n_c
 							file = file.path(file_path, "wasp_res.txt"),
 							sep = "\n", append = TRUE)
 			rm(kmbayes_res); gc()
-			return(fp)   # 返回轻量字符串，而不是大对象
+			return(fp)   # Return lightweight file paths with save_loc=TRUE for very large datasets, reducing memory peak
 		} else {
 			return(kmbayes_res)
 		}
@@ -608,4 +608,5 @@ skmbayes <- function(Z,X,y,n_subset=1,n_samp=200, iter=1000, parallel=FALSE, n_c
 
 
   }
+
 
